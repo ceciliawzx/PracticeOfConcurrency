@@ -35,7 +35,7 @@ public class Demo {
 
   public static void main(String[] args) {
     ThreadSafeList<Integer> list = new ThreadSafeList<>();
-    final int numOperations = 5;
+    final int numOperations = 1000;
     Thread pusher = new Pusher(list, numOperations);
     Thread popper = new Popper(list, numOperations);
     pusher.start();

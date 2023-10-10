@@ -12,13 +12,31 @@ public class ThreadSafeList<E> {
   private final StringBuffer log = new StringBuffer();
 
   public Optional<E> pop() {
-    // TODO: populate
-    throw new RuntimeException();
+    // Note the locking order: "elements", then "log". And see below ...
+    synchronized (elements) {
+      synchronized (log) {
+        log.append("Entered pop\n");
+        if (elements.isEmpty()) {
+          log.append("pop failed\n");
+          return Optional.empty();
+        }
+        log.append("pop succeeded\n");
+        return Optional.of(elements.remove(0));
+      }
+    }
   }
 
   public void push(E element) {
-    // TODO: populate
-    throw new RuntimeException();
+    // ... here we have a different locking order: "log", then "elements".
+    // This can lead to the pusher thread holding a lock on "log", the popper thread
+    // holding a lock on "elements", and it being impossible for each thread to get the
+    // lock that the other holds. Deadlock!
+    synchronized (log) {
+      synchronized (elements) {
+        log.append("Entered push\n");
+        elements.add(element);
+      }
+    }
   }
 
   public String getLog() {
