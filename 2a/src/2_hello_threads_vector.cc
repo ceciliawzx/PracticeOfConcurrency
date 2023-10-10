@@ -1,5 +1,5 @@
-#include <thread>
 #include <iostream>
+#include <thread>
 #include <vector>
 
 static void ThreadBody() {
@@ -16,5 +16,4 @@ int main() {
   for (auto& t : threads) {
     t.join();
   }
-
 }
